@@ -21,25 +21,32 @@ const createChatLi= (message, className)=>{
     return chatLi
 }
 
-const generateResponse= async (incomingChatLi)=>{
 
-    const messageElement= incomingChatLi.querySelector("p")
+const generateResponse = async (incomingChatLi) => {
+    try {
+        const messageElement = incomingChatLi.querySelector("p");
 
-    const response= await axios({
-        url: API_URL,
-        method: "post",
-        data: {
-            contents: [
-                {parts: [{text: userMessage}]}
-            ]
-        }
-    })
-   // console.log(response['data']['candidates'][0]['content']['parts'][0]['text'])
-    messageElement.textContent= response['data']['candidates'][0]['content']['parts'][0]['text']
+        const response = await axios({
+            url: API_URL,
+            method: "post",
+            data: {
+                contents: [
+                    { parts: [{ text: userMessage }] }
+                ]
+            }
+        });
 
-    // .finally()
+        messageElement.textContent = response.data.candidates[0].content.parts[0].text;
+    } catch (error) {
+        console.error("Error fetching response:", error);
+        messageElement.classList.add("error");
+        messageElement.textContent = "An error occurred while fetching the response.";
+    } finally {
+        chatBox.scrollTo(0, chatBox.scrollHeight);
+    }
+};
 
-}
+
    
    
 
